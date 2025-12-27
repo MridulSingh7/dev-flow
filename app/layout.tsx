@@ -10,6 +10,7 @@ const inter = localFont({
   variable: "--font-inter",
   weight: "100 200 300 400 500 700 800 900",
 });
+
 const spaceGroteskVF = localFont({
   src: "./fonts/SpaceGroteskVF.ttf",
   variable: "--font-space-grotesk",
@@ -19,7 +20,7 @@ const spaceGroteskVF = localFont({
 export const metadata: Metadata = {
   title: "DevFlow",
   description:
-    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
+    "A community-driven platform for asking and answering programming questions.",
   icons: {
     icon: "/images/site-logo.svg",
   },
@@ -27,9 +28,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -41,9 +42,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Navbar />
           {children}
         </ThemeProvider>
-        <Navbar />
       </body>
     </html>
   );
