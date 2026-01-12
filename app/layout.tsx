@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { auth } from "@/auth";
 import Providers from "./Providers";
-
+import Navbar from "@/navigation/navbar";
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
   variable: "--font-inter",
@@ -39,6 +39,7 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} ${spaceGroteskVF.variable} antialiased`}
       >
+        <Navbar />
         <Providers session={session}>
           <ThemeProvider
             attribute="class"
