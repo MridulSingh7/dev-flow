@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { auth } from "@/auth";
 import Providers from "./Providers";
-import Navbar from "@/navigation/navbar";
+import Navbar from "@/components/navigation/navbar";
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
   variable: "--font-inter",
