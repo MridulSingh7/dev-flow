@@ -8,8 +8,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <main className="background-light850_dark100 realtive">
       <Navbar />
-      {children}
-
       <div className="flex">
         <LeftSidebar />
 

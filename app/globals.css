@@ -453,3 +453,6 @@ code {
   display: grid !important;
   width: 100% !important;
 }
+p {
+  @apply text-dark-500 dark:text-light-700;
+}
