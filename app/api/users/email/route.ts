@@ -16,7 +16,6 @@ export async function POST(request: Request) {
 
     const user = await User.findOne({ email });
     if (!user) throw new NotFoundError("User");
-
     return NextResponse.json(
       {
         success: true,
