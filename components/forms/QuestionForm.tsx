@@ -11,8 +11,7 @@ import TagCard from "../cards/TagCard";
 
 import ROUTES from "@/constants/routes";
 import { toast } from "sonner";
-import { createQuestion } from "@/lib/actions/question.action";
-
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -30,7 +29,12 @@ const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Params {
+  question?: Question;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
@@ -38,9 +42,9 @@ const QuestionForm = () => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -85,25 +89,37 @@ const QuestionForm = () => {
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
   ) => {
+    if (isEdit && question) {
+      const result = await editQuestion({
+        questionId: question?._id,
+        ...data,
+      });
+
+      if (result.success) {
+        toast.success("Question updated successfully");
+
+        if (result.data)
+          router.push(ROUTES.QUESTION(result.data._id.toString()));
+      } else {
+        toast.error(result.error?.message || "Something went wrong");
+      }
+
+      return;
+    }
+
     startTransition(async () => {
       const result = await createQuestion(data);
 
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "Question created successfully",
-        });
+        toast.success("Question created successfully");
 
-        if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+        if (result.data)
+          router.push(ROUTES.QUESTION(result.data._id.toString()));
       } else {
-        toast({
-          title: `Error ${result.status}`,
-          description: result.error?.message || "Something went wrong",
-          variant: "destructive",
-        });
+        toast.error(result.error?.message || "Something went wrong");
       }
     });
-  }; // ✅ MISSING BRACE FIXED HERE
+  };
 
   return (
     <Form {...form}>
@@ -121,7 +137,7 @@ const QuestionForm = () => {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
+                  className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-14 border"
                   {...field}
                 />
               </FormControl>
@@ -170,7 +186,7 @@ const QuestionForm = () => {
               <FormControl>
                 <div>
                   <Input
-                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-14 border"
                     placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
@@ -204,7 +220,7 @@ const QuestionForm = () => {
           <Button
             type="submit"
             disabled={isPending}
-            className="primary-gradient w-fit !text-light-900"
+            className="primary-gradient w-fit text-light-900!"
           >
             {isPending ? (
               <>
@@ -212,7 +228,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              <>Ask A Question</>
+              <>{isEdit ? "Edit" : "Ask a Question"}</>
             )}
           </Button>
         </div>
