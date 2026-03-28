@@ -1,9 +1,8 @@
 "use server";
 
-import mongoose, { type FilterQuery } from "mongoose";
+import mongoose from "mongoose";
 
 import Question, { IQuestionDoc } from "@/database/question.model";
-
 import TagQuestion from "@/database/tag-question.model";
 import Tag, { ITagDoc } from "@/database/tag.model";
 
@@ -118,14 +117,14 @@ export async function editQuestion(
     }
 
     const tagsToAdd = tags.filter(
-      (tag) =>
+      (tag: string) =>
         !question.tags.some((t: ITagDoc) =>
           t.name.toLowerCase().includes(tag.toLowerCase())
         )
     );
     const tagsToRemove = question.tags.filter(
       (tag: ITagDoc) =>
-        !tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
+        !tags.some((t: string) => t.toLowerCase() === tag.name.toLowerCase())
     );
 
     const newTagDocuments = [];
@@ -231,7 +230,7 @@ export async function getQuestions(
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
-  const filterQuery: FilterQuery<typeof Question> = {};
+  const filterQuery: Record<string, unknown> = {};
 
   if (filter === "recommended") {
     return { success: true, data: { questions: [], isNext: false } };
