@@ -1,5 +1,8 @@
 @import "tailwindcss";
+
 @plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary-100: #fff1e6;
@@ -452,7 +455,4 @@ code {
 [data-bright-mode="light"]:not(:not(html.light [data-bright-mode="light"])) {
   display: grid !important;
   width: 100% !important;
-}
-p {
-  @apply text-dark-500 dark:text-light-700;
 }
