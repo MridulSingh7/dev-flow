@@ -1,37 +1,35 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { SessionProvider } from "next-auth/react";
+import { ReactNode } from "react";
+
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
 import { auth } from "@/auth";
-import Providers from "./Providers";
-import Navbar from "@/components/navigation/navbar";
+import { Toaster } from "sonner";
+import ThemeProvider from "@/context/Theme";
+
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
   variable: "--font-inter",
   weight: "100 200 300 400 500 700 800 900",
 });
 
-const spaceGroteskVF = localFont({
+const spaceGrotesk = localFont({
   src: "./fonts/SpaceGroteskVF.ttf",
   variable: "--font-space-grotesk",
-  weight: "100 200 300 400 500 700 800 900",
+  weight: "300 400 500 700",
 });
 
 export const metadata: Metadata = {
   title: "DevFlow",
   description:
-    "A community-driven platform for asking and answering programming questions.",
+    "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
   icons: {
     icon: "/images/site-logo.svg",
   },
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 
   return (
@@ -43,11 +41,10 @@ export default async function RootLayout({
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
-      <body
-        className={`${inter.variable} ${spaceGroteskVF.variable} antialiased`}
-      >
-        <Navbar />
-        <Providers session={session}>
+      <SessionProvider session={session}>
+        <body
+          className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -56,9 +53,11 @@ export default async function RootLayout({
           >
             {children}
           </ThemeProvider>
-        </Providers>
-        <Toaster />
-      </body>
+          <Toaster />
+        </body>
+      </SessionProvider>
     </html>
   );
-}
+};
+
+export default RootLayout;
