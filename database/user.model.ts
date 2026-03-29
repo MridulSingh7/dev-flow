@@ -1,5 +1,5 @@
 import { model, models, Schema, Document } from "mongoose";
-import { uuid } from "zod";
+import { randomUUID } from "crypto";
 
 export interface IUser {
   name: string;
