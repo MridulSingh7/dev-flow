@@ -6,9 +6,12 @@ import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
 import AllAnswers from "@/components/answers/AllAnswers";
 import AnswerForm from "@/components/forms/AnswerForm";
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
+
 import Votes from "@/components/votes/Votes";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
+import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasVoted } from "@/lib/actions/vote.action";
 import ROUTES from "@/constants/routes";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
@@ -34,12 +37,14 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     filter: "latest",
   });
 
-
   const hasVotedPromise = hasVoted({
     targetId: question._id,
     targetType: "question",
   });
 
+  const hasSavedQuestionPromise = hasSavedQuestion({
+    questionId: question._id,
+  });
 
   const { author, createdAt, answers, views, tags, content, title } = question;
 
@@ -61,14 +66,20 @@ const QuestionDetails = async ({ params }: RouteParams) => {
             </Link>
           </div>
 
-          <div className="flex justify-end">
-          <Suspense fallback={<div>Loading...</div>}>
+          <div className="flex items-center justify-end gap-4">
+            <Suspense fallback={<div>Loading...</div>}>
               <Votes
                 targetType="question"
                 upvotes={question.upvotes}
                 downvotes={question.downvotes}
                 targetId={question._id}
                 hasVotedPromise={hasVotedPromise}
+              />
+            </Suspense>
+            <Suspense fallback={<div>Loading...</div>}>
+              <SaveQuestion
+                questionId={question._id}
+                hasSavedQuestionPromise={hasSavedQuestionPromise}
               />
             </Suspense>
           </div>
