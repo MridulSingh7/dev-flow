@@ -54,7 +54,7 @@ interface Answer {
   _id: string;
   author: Author;
   content: string;
-  upvotes: number;
+  upvotes: number;  
   question: string;
   downvotes: number;
   createdAt: Date;

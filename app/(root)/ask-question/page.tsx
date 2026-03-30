@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import QuestionForm from "@/components/forms/QuestionForm";
 import { auth } from "@/auth";
 
-const session = await auth();
-
 const AskQuestion = async () => {
+  const session = await auth();
   if (!session) return redirect("/sign-in");
 
   return (
