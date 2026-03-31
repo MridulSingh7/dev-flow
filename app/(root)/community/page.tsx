@@ -7,6 +7,7 @@ import DataRenderer from "@/components/DataRenderer";
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_USERS } from "@/constants/states";
+import Pagination from "@/components/Pagination";
 import { getUsers } from "@/lib/actions/user.action";
 
 const Community = async ({ searchParams }: RouteParams) => {
@@ -19,7 +20,7 @@ const Community = async ({ searchParams }: RouteParams) => {
     filter,
   });
 
-  const { users } = data || {};
+  const { users, isNext } = data || {};
 
   return (
     <div>
@@ -52,6 +53,8 @@ const Community = async ({ searchParams }: RouteParams) => {
           </div>
         )}
       />
+      <Pagination page={page} isNext={isNext || false} />
+
     </div>
   );
 };

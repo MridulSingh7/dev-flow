@@ -4,7 +4,7 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { HomePageFilters } from "@/constants/filters";
-
+import Pagination from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import { getQuestions } from "@/lib/actions/question.action";
@@ -23,7 +23,8 @@ const Home = async ({ searchParams }: SearchParams) => {
     query: query || "",
     filter: filter || "",
   });
-  const { questions } = data || {};
+  const { questions, isNext } = data || {};
+
 
   return (
     <>
@@ -63,6 +64,8 @@ const Home = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       />
+      <Pagination page={page} isNext={isNext || false} />
+
     </>
   );
 };
