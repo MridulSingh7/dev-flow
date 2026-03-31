@@ -54,7 +54,7 @@ interface Answer {
   _id: string;
   author: Author;
   content: string;
-  upvotes: number;  
+  upvotes: number;
   question: string;
   downvotes: number;
   createdAt: Date;
@@ -99,6 +99,19 @@ interface Job {
   job_country?: string;
 }
 
+interface User {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portfolio?: string;
+  reputation?: number;
+  createdAt: Date;
+}
+
 interface Country {
   name: {
     common: string;
@@ -109,6 +122,11 @@ interface GlobalSearchedItem {
   id: string;
   type: "question" | "answer" | "user" | "tag";
   title: string;
+}
+interface BadgeCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
 }
 
 type ActionResponse<T = null> = {
