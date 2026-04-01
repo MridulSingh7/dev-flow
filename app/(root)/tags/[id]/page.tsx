@@ -47,8 +47,8 @@ const Page = async ({ params, searchParams }: RouteParams) => {
           </div>
         )}
       />
-      <Pagination page={page} isNext={isNext || false} />
 
+      <Pagination page={page} isNext={isNext || false} />
     </>
   );
 };

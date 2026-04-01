@@ -1,10 +1,12 @@
-import React from "react";
 import { redirect } from "next/navigation";
-import QuestionForm from "@/components/forms/QuestionForm";
+import React from "react";
+
 import { auth } from "@/auth";
+import QuestionForm from "@/components/forms/QuestionForm";
 
 const AskQuestion = async () => {
   const session = await auth();
+
   if (!session) return redirect("/sign-in");
 
   return (
@@ -17,4 +19,5 @@ const AskQuestion = async () => {
     </>
   );
 };
+
 export default AskQuestion;

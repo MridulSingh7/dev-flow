@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 
 import "./globals.css";
 import { auth } from "@/auth";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 import ThemeProvider from "@/context/Theme";
 
 const inter = localFont({

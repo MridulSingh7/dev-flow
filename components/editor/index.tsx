@@ -43,6 +43,7 @@ interface Props {
 
 const Editor = ({ value, editorRef, fieldChange }: Props) => {
   const { resolvedTheme } = useTheme();
+
   const themeExtension = resolvedTheme === "dark" ? [basicDark] : [];
 
   return (

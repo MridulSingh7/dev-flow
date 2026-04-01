@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { cn } from "@/lib/utils";
+
 import ROUTES from "@/constants/routes";
+import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback } from "./ui/avatar";
 
@@ -35,8 +36,8 @@ const UserAvatar = ({
           <Image
             src={imageUrl}
             alt={name}
+            className="object-cover"
             fill
-            className="object-cover rounded-full"
             quality={100}
           />
         ) : (

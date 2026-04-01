@@ -1,17 +1,20 @@
 "use client";
-import { ReloadIcon } from "@radix-ui/react-icons";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MDXEditorMethods } from "@mdxeditor/editor";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import TagCard from "../cards/TagCard";
 
 import ROUTES from "@/constants/routes";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
+import { AskQuestionSchema } from "@/lib/validations";
+
+import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -23,7 +26,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { AskQuestionSchema } from "@/lib/validations";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -52,6 +54,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
     e: React.KeyboardEvent<HTMLInputElement>,
     field: { value: string[] }
   ) => {
+    console.log(field, e);
     if (e.key === "Enter") {
       e.preventDefault();
       const tagInput = e.currentTarget.value.trim();
@@ -76,6 +79,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 
   const handleTagRemove = (tag: string, field: { value: string[] }) => {
     const newTags = field.value.filter((t) => t !== tag);
+
     form.setValue("tags", newTags);
 
     if (newTags.length === 0) {
@@ -89,34 +93,46 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
   ) => {
-    if (isEdit && question) {
-      const result = await editQuestion({
-        questionId: question?._id,
-        ...data,
-      });
+    startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question?._id,
+          ...data,
+        });
 
-      if (result.success) {
-        toast.success("Question updated successfully");
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "Question updated successfully",
+          });
 
-        if (result.data)
-          router.push(ROUTES.QUESTION(result.data._id.toString()));
-      } else {
-        toast.error(result.error?.message || "Something went wrong");
+          if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+        } else {
+          toast({
+            title: `Error ${result.status}`,
+            description: result.error?.message || "Something went wrong",
+            variant: "destructive",
+          });
+        }
+
+        return;
       }
 
-      return;
-    }
-
-    startTransition(async () => {
       const result = await createQuestion(data);
 
       if (result.success) {
-        toast.success("Question created successfully");
+        toast({
+          title: "Success",
+          description: "Question created successfully",
+        });
 
-        if (result.data)
-          router.push(ROUTES.QUESTION(result.data._id.toString()));
+        if (result.data) router.push(ROUTES.QUESTION(result.data._id));
       } else {
-        toast.error(result.error?.message || "Something went wrong");
+        toast({
+          title: `Error ${result.status}`,
+          description: result.error?.message || "Something went wrong",
+          variant: "destructive",
+        });
       }
     });
   };
@@ -137,7 +153,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
               </FormLabel>
               <FormControl>
                 <Input
-                  className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-14 border"
+                  className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
                   {...field}
                 />
               </FormControl>
@@ -149,7 +165,6 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="content"
@@ -174,7 +189,6 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="tags"
@@ -186,13 +200,13 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
               <FormControl>
                 <div>
                   <Input
-                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-14 border"
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
                     placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 flex-wrap gap-2.5">
-                      {field.value.map((tag: string) => (
+                      {field?.value?.map((tag: string) => (
                         <TagCard
                           key={tag}
                           _id={tag}
@@ -220,7 +234,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           <Button
             type="submit"
             disabled={isPending}
-            className="primary-gradient w-fit text-light-900!"
+            className="primary-gradient w-fit !text-light-900"
           >
             {isPending ? (
               <>

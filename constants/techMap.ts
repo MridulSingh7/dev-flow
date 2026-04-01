@@ -108,6 +108,7 @@ export const techMap: { [key: string]: string } = {
 
   // Linux
   linux: "devicon-linux-plain",
+
   // Jenkins
   jenkins: "devicon-jenkins-plain",
 

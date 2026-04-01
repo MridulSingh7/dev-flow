@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Button } from "./ui/button";
+
 import { DEFAULT_EMPTY, DEFAULT_ERROR } from "@/constants/states";
+
+import { Button } from "./ui/button";
 
 interface Props<T> {
   success: boolean;
@@ -66,7 +68,7 @@ const StateSkeleton = ({
     </p>
     {button && (
       <Link href={button.href}>
-        <Button className="paragraph-medium mt-5 min-h-11.5 rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500">
+        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500">
           {button.text}
         </Button>
       </Link>
@@ -95,7 +97,7 @@ const DataRenderer = <T,>({
             ? JSON.stringify(error.details, null, 2)
             : DEFAULT_ERROR.message
         }
-        button={DEFAULT_ERROR.button}
+        button={empty.button}
       />
     );
   }

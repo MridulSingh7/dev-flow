@@ -3,10 +3,10 @@
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
+
 import ROUTES from "@/constants/routes";
 import { Question, Vote } from "@/database";
 import Answer, { IAnswerDoc } from "@/database/answer.model";
-import { createInteraction } from "./interaction.action";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -15,6 +15,7 @@ import {
   DeleteAnswerSchema,
   GetAnswersSchema,
 } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -36,8 +37,8 @@ export async function createAnswer(
   session.startTransaction();
 
   try {
+    // check if the question exists
     const question = await Question.findById(questionId);
-
     if (!question) throw new Error("Question not found");
 
     const [newAnswer] = await Answer.create(
@@ -53,8 +54,11 @@ export async function createAnswer(
 
     if (!newAnswer) throw new Error("Failed to create the answer");
 
+    // update the question answers count
     question.answers += 1;
     await question.save({ session });
+
+    // log the interaction
     after(async () => {
       await createInteraction({
         action: "post",
@@ -63,8 +67,6 @@ export async function createAnswer(
         authorId: userId as string,
       });
     });
-
-
 
     await session.commitTransaction();
 
@@ -176,6 +178,8 @@ export async function deleteAnswer(
 
     // delete the answer
     await Answer.findByIdAndDelete(answerId);
+
+    // log the interaction
     after(async () => {
       await createInteraction({
         action: "delete",
@@ -184,7 +188,6 @@ export async function deleteAnswer(
         authorId: user?.id as string,
       });
     });
-
 
     revalidatePath(`/profile/${user?.id}`);
 

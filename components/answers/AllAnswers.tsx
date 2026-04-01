@@ -1,15 +1,15 @@
-import { EMPTY_ANSWERS } from "@/constants/states";
 import { AnswerFilters } from "@/constants/filters";
-import CommonFilter from "../filters/CommonFilter";
+import { EMPTY_ANSWERS } from "@/constants/states";
+
 import AnswerCard from "../cards/AnswerCard";
+import DataRenderer from "../DataRenderer";
+import CommonFilter from "../filters/CommonFilter";
 import Pagination from "../Pagination";
 
-import DataRenderer from "../DataRenderer";
-
 interface Props extends ActionResponse<Answer[]> {
-  totalAnswers: number;
   page: number;
   isNext: boolean;
+  totalAnswers: number;
 }
 
 const AllAnswers = ({
@@ -42,6 +42,7 @@ const AllAnswers = ({
           answers.map((answer) => <AnswerCard key={answer._id} {...answer} />)
         }
       />
+
       <Pagination page={page} isNext={isNext} />
     </div>
   );

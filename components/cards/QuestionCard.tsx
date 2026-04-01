@@ -31,6 +31,7 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
+
         {showActionBtns && <EditDeleteAction type="Question" itemId={_id} />}
       </div>
 

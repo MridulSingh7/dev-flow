@@ -11,11 +11,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "@/hooks/use-toast";
+import { deleteAnswer } from "@/lib/actions/answer.action";
 import { deleteQuestion } from "@/lib/actions/question.action";
-import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { deleteAnswer } from "@/lib/actions/answer.action";
 
 interface Props {
   type: string;
@@ -31,15 +31,19 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 
   const handleDelete = async () => {
     if (type === "Question") {
+      // Call API to delete question
       await deleteQuestion({ questionId: itemId });
 
-      toast.success("Question deleted", {
+      toast({
+        title: "Question deleted",
         description: "Your question has been deleted successfully.",
       });
     } else if (type === "Answer") {
       // Call API to delete answer
+      await deleteAnswer({ answerId: itemId });
 
-      toast.success("Answer deleted", {
+      toast({
+        title: "Answer deleted",
         description: "Your answer has been deleted successfully.",
       });
     }
@@ -47,9 +51,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 
   return (
     <div
-      className={`flex items-center justify-end gap-3 max-sm:w-full ${
-        type === "Answer" && "gap-0 justify-center"
-      }`}
+      className={`flex items-center justify-end gap-3 max-sm:w-full ${type === "Answer" && "gap-0 justify-center"}`}
     >
       {type === "Question" && (
         <Image
@@ -78,7 +80,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
           <AlertDialogFooter>
             <AlertDialogCancel className="btn">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="border-primary-100! bg-primary-500! text-light-800!"
+              className="!border-primary-100 !bg-primary-500 !text-light-800"
               onClick={handleDelete}
             >
               Continue

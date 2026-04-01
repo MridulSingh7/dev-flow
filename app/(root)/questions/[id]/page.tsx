@@ -2,22 +2,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import React, { Suspense } from "react";
+
+import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
-import AllAnswers from "@/components/answers/AllAnswers";
 import AnswerForm from "@/components/forms/AnswerForm";
-import { hasSavedQuestion } from "@/lib/actions/collection.action";
-
-import Votes from "@/components/votes/Votes";
 import Metric from "@/components/Metric";
-import UserAvatar from "@/components/UserAvatar";
 import SaveQuestion from "@/components/questions/SaveQuestion";
-import { hasVoted } from "@/lib/actions/vote.action";
+import UserAvatar from "@/components/UserAvatar";
+import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
-import { formatNumber, getTimeStamp } from "@/lib/utils";
-import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { getAnswers } from "@/lib/actions/answer.action";
-
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
+import { hasVoted } from "@/lib/actions/vote.action";
+import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { Metadata } from "next";
 
 export async function generateMetadata({
@@ -49,11 +48,13 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
   const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
+
   after(async () => {
     await incrementViews({ questionId: id });
   });
 
   if (!success || !question) return redirect("/404");
+
   const {
     success: areAnswersLoaded,
     data: answersResult,
@@ -84,8 +85,8 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
             <UserAvatar
               id={author._id}
               name={author.name}
-              className="size-5.5"
               imageUrl={author.image}
+              className="size-[22px]"
               fallbackClassName="text-[10px]"
             />
             <Link href={ROUTES.PROFILE(author._id)}>
@@ -105,6 +106,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
                 hasVotedPromise={hasVotedPromise}
               />
             </Suspense>
+
             <Suspense fallback={<div>Loading...</div>}>
               <SaveQuestion
                 questionId={question._id}

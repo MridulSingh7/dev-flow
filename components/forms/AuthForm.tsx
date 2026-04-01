@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 import {
   DefaultValues,
   FieldValues,
@@ -12,6 +11,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { z, ZodType } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>;
@@ -32,33 +32,37 @@ interface AuthFormProps<T extends FieldValues> {
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
-const AuthForm = ({
+const AuthForm = <T extends FieldValues>({
   schema,
   defaultValues,
   formType,
   onSubmit,
-}: AuthFormProps<any>) => {
+}: AuthFormProps<T>) => {
   const router = useRouter();
 
-  const form = useForm<any>({
+  const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues as DefaultValues<any>,
+    defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<any> = async (data) => {
+  const handleSubmit: SubmitHandler<T> = async (data) => {
     const result = (await onSubmit(data)) as ActionResponse;
 
     if (result?.success) {
-      toast.success(
-        formType === "SIGN_IN"
-          ? "Signed in successfully"
-          : "Signed up successfully"
-      );
+      toast({
+        title: "Success",
+        description:
+          formType === "SIGN_IN"
+            ? "Signed in successfully"
+            : "Signed up successfully",
+      });
 
       router.push(ROUTES.HOME);
     } else {
-      toast.error(`Error ${result?.status}`, {
+      toast({
+        title: `Error ${result?.status}`,
         description: result?.error?.message,
+        variant: "destructive",
       });
     }
   };
@@ -75,7 +79,7 @@ const AuthForm = ({
           <FormField
             key={field}
             control={form.control}
-            name={field as Path<any>}
+            name={field as Path<T>}
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-2.5">
                 <FormLabel className="paragraph-medium text-dark400_light700">

@@ -1,6 +1,7 @@
+import ROUTES from "@/constants/routes";
 import { IAccount } from "@/database/account.model";
 import { IUser } from "@/database/user.model";
-import ROUTES from "@/constants/routes";
+
 import { fetchHandler } from "./handlers/fetch";
 
 const API_BASE_URL =
@@ -60,7 +61,6 @@ export const api = {
     delete: (id: string) =>
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, { method: "DELETE" }),
   },
-
   ai: {
     getAnswer: (
       question: string,

@@ -51,12 +51,13 @@ const LocalSearch = ({
         }
       }
     }, 300);
+
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, router, route, searchParams, pathname]);
 
   return (
     <div
-      className={`background-light800_darkgradient flex min-h-14 grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
+      className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
     >
       {iconPosition === "left" && (
         <Image
@@ -75,6 +76,7 @@ const LocalSearch = ({
         onChange={(e) => setSearchQuery(e.target.value)}
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
       />
+
       {iconPosition === "right" && (
         <Image
           src={imgSrc}
@@ -87,4 +89,5 @@ const LocalSearch = ({
     </div>
   );
 };
+
 export default LocalSearch;

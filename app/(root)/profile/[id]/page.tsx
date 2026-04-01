@@ -18,10 +18,9 @@ import {
   getUser,
   getUserAnswers,
   getUserQuestions,
-  getUsersAnswers,
+  getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
-import { Profile } from "next-auth";
 
 const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -30,7 +29,6 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
   if (!id) notFound();
 
   const loggedInUser = await auth();
-
   const { success, data, error } = await getUser({
     userId: id,
   });
@@ -58,6 +56,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
   });
+
   const {
     success: userAnswersSuccess,
     data: userAnswers,
@@ -67,15 +66,15 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
   });
+
   const {
     success: userTopTagsSuccess,
     data: userTopTags,
     error: userTopTagsError,
   } = await getUserTopTags({ userId: id });
 
-  const questions = userQuestions?.questions || [];
+  const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
-  const hasMoreQuestions = userQuestions?.isNext || false;
   const { tags } = userTopTags!;
 
   return (
@@ -86,18 +85,17 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
             id={user._id}
             name={user.name}
             imageUrl={user.image}
-            className="size-35 rounded-full object-cover"
+            className="size-[140px] rounded-full object-cover"
             fallbackClassName="text-6xl font-bolder"
           />
 
           <div className="mt-3">
             <h2 className="h2-bold text-dark100_light900">{user.name}</h2>
-
             <p className="paragraph-regular text-dark200_light800">
               @{user.username}
             </p>
 
-            <div className="mt-5 flex flex-wrap items-center gap-5">
+            <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
               {user.portfolio && (
                 <ProfileLink
                   imgUrl="/icons/link.svg"
@@ -125,30 +123,29 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
               </p>
             )}
           </div>
-
-          <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
-            {loggedInUser?.user?.id === id && (
-              <Link href="/profile/edit">
-                <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-44 px-4 py-3">
-                  Edit Profile
-                </Button>
-              </Link>
-            )}
-          </div>
         </div>
 
-        <Stats
-          totalQuestions={userStats?.totalQuestions || 0}
-          totalAnswers={userStats?.totalAnswers || 0}
-          badges={userStats?.badges || { GOLD: 0, SILVER: 0, BRONZE: 0 }}
-          reputationPoints={user.reputation || 0}
-        />
+        <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
+          {loggedInUser?.user?.id === id && (
+            <Link href="/profile/edit">
+              <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-44 px-4 py-3">
+                Edit Profile
+              </Button>
+            </Link>
+          )}
+        </div>
       </section>
 
-      {/* Tabs Section OUTSIDE main section */}
+      <Stats
+        totalQuestions={userStats?.totalQuestions || 0}
+        totalAnswers={userStats?.totalAnswers || 0}
+        badges={userStats?.badges || { GOLD: 0, SILVER: 0, BRONZE: 0 }}
+        reputationPoints={user.reputation || 0}
+      />
+
       <section className="mt-10 flex gap-10">
-        <Tabs defaultValue="top-posts" className="flex-2">
-          <TabsList className="background-light800_dark400 min-h-10.5 p-1">
+        <Tabs defaultValue="top-posts" className="flex-[2]">
+          <TabsList className="background-light800_dark400 min-h-[42px] p-1">
             <TabsTrigger value="top-posts" className="tab">
               Top Posts
             </TabsTrigger>
@@ -212,8 +209,9 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
           </TabsContent>
         </Tabs>
 
-        <div className="flex w-full min-w-62.5 flex-1 flex-col max-lg:hidden">
+        <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
+
           <div className="mt-7 flex flex-col gap-4">
             <DataRenderer
               success={userTopTagsSuccess}
