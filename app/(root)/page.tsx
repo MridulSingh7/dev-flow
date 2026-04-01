@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Metadata } from "next";
+
 import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -10,21 +12,22 @@ import ROUTES from "@/constants/routes";
 import { getQuestions } from "@/lib/actions/question.action";
 import DataRenderer from "@/components/DataRenderer";
 import { EMPTY_QUESTION } from "@/constants/states";
+import { SearchParams } from "next/dist/server/request/search-params";
 
-interface SearchParams {
-  searchParams: Promise<{ [key: string]: string }>;
-}
-
-const Home = async ({ searchParams }: SearchParams) => {
+export const metadata: Metadata = {
+  title: "Dev Overflow | Home",
+  description:
+    "Discover different programming questions and answers with recommendations from the community.",
+};
+async function Home({ searchParams }: RouteParams) {
   const { page, pageSize, query, filter } = await searchParams;
   const { success, data, error } = await getQuestions({
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
-    query: query || "",
-    filter: filter || "",
+    query,
+    filter,
   });
   const { questions, isNext } = data || {};
-
 
   return (
     <>
@@ -34,17 +37,20 @@ const Home = async ({ searchParams }: SearchParams) => {
           className="primary-gradient min-h-11.5 px-4 py-3 text-light-900!"
           asChild
         >
-          <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
+          <Link href={ROUTES.ASK_QUESTION} className="max-sm:w-full">
+            Ask a Question
+          </Link>
         </Button>
       </section>
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
-          route="/"
+          route={ROUTES.HOME}
           imgSrc="/icons/search.svg"
+          iconPosition="left"
           placeholder="Search questions..."
           otherClasses="flex-1"
         />
-         <CommonFilter
+        <CommonFilter
           filters={HomePageFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-md:flex"
@@ -65,9 +71,8 @@ const Home = async ({ searchParams }: SearchParams) => {
         )}
       />
       <Pagination page={page} isNext={isNext || false} />
-
     </>
   );
-};
+}
 
 export default Home;
