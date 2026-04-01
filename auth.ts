@@ -11,8 +11,14 @@ import { SignInSchema } from "./lib/validations";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    GitHub,
-    Google,
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = SignInSchema.safeParse(credentials);
@@ -78,13 +84,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!account || !user) return false;
 
       const userInfo = {
-        name: user.name!,
+        name: (user.name || profile?.login || profile?.name || "User") as string,
         email: user.email!,
-        image: user.image!,
+        image: (user.image || profile?.avatar_url || profile?.picture || undefined) as string | undefined,
         username:
           account.provider === "github"
             ? (profile?.login as string)
-            : (user.name?.toLowerCase() as string),
+            : (user.name?.toLowerCase().replace(/\s/g, "") as string) || "user",
       };
 
       const { success } = (await api.auth.oAuthSignIn({
