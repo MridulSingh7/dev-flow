@@ -1,6 +1,5 @@
 <div align="center">
   <br />
-    <a href="https://www.jsmastery.pro/ultimate-next-course" target="_blank">
       <img src="https://github.com/user-attachments/assets/769882e6-bae6-4932-a117-829cf34f809f" alt="Project Banner">
     </a>
   <br />
@@ -13,12 +12,6 @@
     <img src="https://img.shields.io/badge/-ShadCN_UI-black?style=for-the-badge&logoColor=white&logo=shadcnui&color=000000" alt="shadcnui" />
     <img src="https://img.shields.io/badge/-Open_AI-black?style=for-the-badge&logoColor=white&logo=openai&color=412991" alt="openai" />
   </div>
-
-  <h3 align="center">The Ultimate Next.js Course</h3>
-
-   <div align="center">
-     Build this project step by step with our detailed course on <a href="https://www.jsmastery.pro" target="_blank"><b>JavaScript Mastery PRO</b></a> Website. Join the JSM PRO family!
-    </div>
 </div>
 
 ## 📋 <a name="table">Table of Contents</a>
